@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/bootstrap/js/jquery.min.js"></script> 
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="bootstrap/js/jquery.session.js"></script>
+    <script src="bootstrap/js/purl.js"></script>
+    <link href="/bootstrap/css/cust.css" rel="stylesheet">
+    <script src="bootstrap/js/bootstrap-editable.js" type="text/javascript"></script> 
+
+  </head>
+
+<body> 
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Добавить нового сотрудника</h4>
+      </div>
+      <div class="modal-body">
+       <form name = 'go'>
+        <table>
+          <tr>
+          <td><input name = "idshop" type = number placeholder = "Номер магазина"/></td>
+
+          <td><input name = "name"  type = text placeholder = "Имя"/></td>
+
+          <td><input name = "surname" type = text placeholder = "Фамилия"/></td>
+
+          <td><input name = "pw" type = password placeholder = "Пароль"/></td>
+
+          <td><input name = "fixpay" type = number placeholder = "Зарплата"/></td>
+  </tr>
+        </table>
+       </form>      
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+        <button id = "new" type="button" class="btn btn-primary" data-dismiss="modal">Сохранить изменения</button>
+      </div>
+    </div>
+  </div>
+</div>  
+<div class="modal fade" id="mineModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Добавить нового сотрудника</h4>
+      </div>
+      <div class="modal-body">
+       <form>
+        <table>
+          <tr>
+          <td><input name = "address"  type = text placeholder = "Адрес"/></td>
+</tr>
+        </table>
+       </form>      
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+        <button id = "newShop" type="button" class="btn btn-primary" data-dismiss="modal">Сохранить изменения</button>
+      </div>
+    </div>
+  </div>
+</div>  
+ 
+<body style = "padding-top: 55px;">
+  <div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <a class="navbar-brand"><span class = "welcome">Домовенок: </span></a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+         <ul class="nav navbar-nav">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Сотрудники: <span id = "cnt"> </span><b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a id = "staff">Список сотрудников</a></li> 
+              <li><a data-toggle="modal" data-target="#myModal">Добавить сотрудника</a></li> 
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Магазины: <span id = "cntSh"> </span> <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a id = "shoplist">Список магазинов</a></li>
+              <li><a data-toggle="modal" data-target="#mineModal">Добавить магазин</a></li>
+            </ul>
+          </li>
+          <li>
+            <a id = "stat">Статистика</a>
+          </li>  
+         </ul>   
+         <span class="navbar-text navbar-right" id = "username"</span>
+      </div>
+    </div>
+  </nav>
+  <span class = "cont"></span>
+</body>
+<script>
+jQuery(document).ready(function(){ 
+  if ($.session.get("NAME") == undefined){
+    $.session.set("NAME",$.url().param('username'));
+    $.session.set("SNAME",$.url().param('surname'));
+    $.session.set("ID",$.url().param('id'));
+  } 
+
+  $("#username").text($.session.get("NAME") + " " + $.session.get("SNAME"));
+  $.get("queries/cntStaff.php", function(data){$('#cnt').text(data)});
+  $.get("queries/cntShop.php", function(data){$('#cntSh').text(data)});    
+  $.get("queries/getStaff.php", function(data){$('.cont').html(data); ed();});
+
+  $('body').on('click','.deleteedit',function(){
+  	var x = $(this).closest('tr').attr('idperson');
+    $.get("queries/deletePerson.php", {idperson:x});
+    $.get("queries/getStaff.php", function(data){$('.cont').html(data); ed();});
+    $.get("queries/cntStaff.php", function(data){$('#cnt').text(data)});   
+  });
+    
+  $('body').on('click','.deleteshop',function(){
+	  var x = $(this).closest('tr').attr('idshop');
+    $.get("queries/deleteShop.php", {idshop:x});
+    $.get("queries/getShops.php", function(data){$('.cont').html(data); ed();});
+    $.get("queries/cntShop.php", function(data){$('#cntSh').text(data)});
+  });
+
+  function ed(){
+    $('.nameEdit').editable();
+    $('.surnameEdit').editable();
+    $('.payEdit').editable();
+    $('.dolzhEdit').editable();
+  }  
+
+  $('#staff').on('click', function(){
+    $.get("queries/getStaff.php", function(data){$('.cont').html(data); ed();});
+  });
+     
+  $('#shoplist').on('click', function(){
+    $.get("queries/getShops.php", function(data){$('.cont').html(data); ed();});
+  });
+
+  $('#new').on('click',function(){    
+    $.ajax({
+      url:     "queries/insertPerson.php",
+      type:     "GET",
+      dataType: "html",
+      data: $("form").serialize(), 
+      success: function(response) {
+        $.get("queries/getStaff.php", function(data){$('.cont').html(data); ed();});
+        $.get("queries/cntStaff.php", function(data){$('#cnt').text(data)});
+      },
+     error: function(response) {
+        alert("Ошибка при отправке формы");
+     }
+    });
+  });   
+
+  $('#newShop').on('click',function(){        
+    $.ajax({
+      url:     "queries/insertShop.php",
+      type:     "GET",
+      dataType: "html",
+      data: $("form").serialize(), 
+      success: function(response) {
+        $.get("queries/getShops.php", function(data){$('.cont').html(data); ed();});
+        $.get("queries/cntShop.php", function(data){$('#cntSh').text(data)});
+      },
+      error: function(response) {
+        alert("Ошибка при отправке формы");
+      }
+    });
+  });
+ 
+  $('#stat').on('click', function(){
+    $.get("queries/stat.php", function(data){$('.cont').html(data); ed();});
+  });
+})
+</script>
+</html>

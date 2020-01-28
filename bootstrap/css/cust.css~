@@ -1,0 +1,16 @@
+ @font-face {
+    font-family: New;
+    src: url(/bootstrap/fonts/9071.ttf);
+   }
+.welcome{
+   font-family: New, 'Comic Sans MS';
+   color: #B2EC5D;
+   font-size: 41pt;
+}
+
+ .into {
+    background-image: url(/bootstrap/DomKuzka.jpg);
+    background-color: #B2EC5D;
+    background-position: 50% 15%;
+    background-repeat: no-repeat;
+   }
